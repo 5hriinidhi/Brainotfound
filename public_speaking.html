@@ -1,0 +1,972 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Public Speaking – Skill Forge</title>
+    <script src="config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --gold: #F5C518;
+            --purple: #a855f7;
+            --green: #48bb78;
+            --red: #fc6060;
+            --teal: #22d3ee;
+            --pixel: 'Press Start 2P', monospace;
+            --body: 'Inter', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: var(--body);
+            background: #000;
+        }
+
+        /* CRT overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.06) 2px, rgba(0, 0, 0, 0.06) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ── Fullscreen background image */
+        .bg {
+            position: fixed;
+            inset: 0;
+            background: url('images/Screenshot 2026-02-21 143910.png') center center / contain no-repeat;
+            z-index: 0;
+        }
+
+        /* slight darkening vignette on edges */
+        .bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.55) 100%);
+        }
+
+        /* ── Transcript panel — left side, tall, semi-transparent */
+        .transcript-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 340px;
+            height: 100vh;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            background: rgba(6, 8, 16, 0.78);
+            backdrop-filter: blur(14px) saturate(1.2);
+            border-right: 1px solid rgba(168, 85, 247, 0.2);
+            transition: transform 0.4s ease;
+        }
+
+        .panel-top {
+            padding: 18px 18px 12px;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .panel-logo {
+            font-family: var(--pixel);
+            font-size: 8px;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .panel-heading {
+            font-family: var(--pixel);
+            font-size: 7px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            line-height: 1.6;
+        }
+
+        .panel-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+            transition: color 0.3s;
+        }
+
+        .panel-status .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #444;
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .panel-status.recording {
+            color: var(--purple);
+        }
+
+        .panel-status.recording .dot {
+            background: var(--purple);
+            animation: blink 1s step-end infinite;
+            box-shadow: 0 0 6px var(--purple);
+        }
+
+        .panel-status.done {
+            color: var(--green);
+        }
+
+        .panel-status.done .dot {
+            background: var(--green);
+            animation: none;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Scrollable transcript body */
+        .transcript-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        }
+
+        .empty-hint {
+            margin: auto;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+            line-height: 1.7;
+        }
+
+        .t-entry {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            opacity: 1;
+        }
+
+
+
+        .t-tag {
+            font-family: var(--pixel);
+            font-size: 6px;
+            letter-spacing: 1px;
+            color: var(--purple);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .t-num {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .t-text {
+            font-size: 18px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.96);
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 12px;
+            border-top-left-radius: 3px;
+            padding: 12px 16px;
+        }
+
+        .t-wc {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.28);
+            padding-left: 3px;
+        }
+
+        .t-processing {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--teal);
+            font-size: 12px;
+            padding: 4px 0;
+        }
+
+        .spin {
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(34, 211, 238, 0.2);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: rot 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes rot {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Stats bar at bottom of panel */
+        .stats-bar {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(168, 85, 247, 0.15);
+        }
+
+        .stat {
+            flex: 1;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .stat+.stat {
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .stat-val {
+            font-family: var(--pixel);
+            font-size: 12px;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+        }
+
+        /* ── Mic button — bottom center, always on top of image */
+        .mic-center {
+            position: fixed;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mic-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            background: rgba(168, 85, 247, 0.85);
+            box-shadow: 0 0 0 6px rgba(168, 85, 247, 0.25), 0 8px 30px rgba(168, 85, 247, 0.4);
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.07);
+        }
+
+        .mic-btn.recording {
+            background: rgba(252, 96, 96, 0.85);
+            box-shadow: 0 0 0 6px rgba(252, 96, 96, 0.25), 0 8px 30px rgba(252, 96, 96, 0.45);
+            animation: micPulse 1.4s ease-in-out infinite;
+        }
+
+        .mic-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        @keyframes micPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 6px rgba(252, 96, 96, 0.25), 0 8px 30px rgba(252, 96, 96, 0.45);
+            }
+
+            50% {
+                box-shadow: 0 0 0 14px rgba(252, 96, 96, 0.1), 0 8px 40px rgba(252, 96, 96, 0.6);
+            }
+        }
+
+        .mic-label {
+            font-family: var(--pixel);
+            font-size: 7px;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            padding: 5px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        /* Waveform overlay — bottom center, above image */
+        .waveform {
+            position: fixed;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            display: flex;
+            gap: 5px;
+            align-items: flex-end;
+            height: 40px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .waveform.active {
+            opacity: 1;
+        }
+
+        .wave-bar {
+            width: 5px;
+            border-radius: 3px;
+            background: rgba(168, 85, 247, 0.85);
+            min-height: 4px;
+            animation: waveAnim 0.5s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(2) {
+            animation-delay: .08s;
+            background: rgba(200, 100, 255, 0.85);
+        }
+
+        .wave-bar:nth-child(3) {
+            animation-delay: .16s;
+        }
+
+        .wave-bar:nth-child(4) {
+            animation-delay: .04s;
+            background: rgba(200, 100, 255, 0.85);
+        }
+
+        .wave-bar:nth-child(5) {
+            animation-delay: .12s;
+        }
+
+        .wave-bar:nth-child(6) {
+            animation-delay: .2s;
+            background: rgba(200, 100, 255, 0.85);
+        }
+
+        .wave-bar:nth-child(7) {
+            animation-delay: .06s;
+        }
+
+        @keyframes waveAnim {
+
+            0%,
+            100% {
+                height: 4px;
+            }
+
+            50% {
+                height: 36px;
+            }
+        }
+
+        /* Timer top-right */
+        .hud-timer {
+            position: fixed;
+            top: 14px;
+            right: 20px;
+            z-index: 20;
+            font-family: var(--pixel);
+            font-size: 12px;
+            color: var(--purple);
+            background: rgba(6, 8, 16, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+        }
+
+        /* ── Finish Button ── */
+        .finish-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 20;
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid var(--purple);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: var(--pixel);
+            font-size: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+            display: none;
+            /* hidden until 1 segment is complete */
+        }
+
+        .finish-btn:hover {
+            background: var(--purple);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
+        }
+
+        /* ── Analysis Panel (Right Side) ── */
+        .analysis-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            /* Initially hidden */
+            width: 380px;
+            height: 100vh;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            background: rgba(6, 8, 16, 0.85);
+            backdrop-filter: blur(16px) saturate(1.2);
+            border-left: 1px solid rgba(168, 85, 247, 0.3);
+            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .analysis-panel.show {
+            right: 0;
+        }
+
+        .analysis-title {
+            font-family: var(--pixel);
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 24px;
+            text-shadow: 0 0 10px rgba(245, 197, 24, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .score-group {
+            margin-bottom: 20px;
+        }
+
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .score-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .score-value {
+            font-family: var(--pixel);
+            font-size: 10px;
+            color: var(--teal);
+        }
+
+        .progress-bar-wrap {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple), var(--teal));
+            width: 0%;
+            /* Setted by JS */
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .feedback-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .loading-analyze {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: var(--pixel);
+            font-size: 10px;
+            color: var(--teal);
+            margin-top: 40px;
+        }
+
+        .topic-popup {
+            position: fixed;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--purple);
+            padding: 20px 30px;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.3);
+            transition: top 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .topic-popup.show {
+            top: 40px;
+        }
+
+        .topic-label {
+            display: block;
+            font-family: var(--pixel);
+            font-size: 10px;
+            color: var(--teal);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fullscreen audience background -->
+    <div class="bg"></div>
+
+    <!-- Topic Popup -->
+    <div id="topicPopup" class="topic-popup">
+        <span class="topic-label">YOUR IMPROMPTU TOPIC:</span>
+        <span id="topicText"></span>
+    </div>
+
+    <!-- Timer -->
+    <div class="hud-timer" id="timer">00:00</div>
+
+    <!-- Left transcript panel -->
+    <div class="transcript-panel">
+        <div class="panel-top">
+            <a href="index.html" class="panel-logo">🪙 Skill Forge</a>
+            <div class="panel-heading">🎤 PUBLIC SPEAKING<br>LIVE TRANSCRIPT</div>
+            <div class="panel-status" id="panelStatus">
+                <span class="dot"></span>
+                <span id="statusText">Ready — press the mic to start</span>
+            </div>
+        </div>
+
+        <div class="transcript-body" id="transcriptBody">
+            <div class="empty-hint">Your words will appear here<br>as you speak each segment</div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-val" id="statSeg">0</div>
+                <div class="stat-label">Segments</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val" id="statWords">0</div>
+                <div class="stat-label">Words</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val" id="statWPM">—</div>
+                <div class="stat-label">WPM</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated waveform bars (center) -->
+    <div class="waveform" id="waveform">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+    </div>
+
+    <!-- Mic button (center bottom) -->
+    <div class="mic-center">
+        <button class="mic-btn" id="micBtn" title="Click to record">🎤</button>
+        <div class="mic-label" id="micLabel">PRESS TO SPEAK</div>
+    </div>
+
+    <!-- Finish Button -->
+    <button class="finish-btn" id="finishBtn">🏁 FINISH & ANALYZE</button>
+
+    <!-- Right Analysis Panel -->
+    <div class="analysis-panel" id="analysisPanel">
+        <div class="analysis-title">AI SPEECH ANALYSIS</div>
+        <div id="analysisContent">
+            <!-- Will be populated by JS -->
+        </div>
+    </div>
+
+    <script>
+        const micBtn = document.getElementById('micBtn');
+        const micLabel = document.getElementById('micLabel');
+        const panelStatus = document.getElementById('panelStatus');
+        const statusText = document.getElementById('statusText');
+        const transcriptB = document.getElementById('transcriptBody');
+        const waveform = document.getElementById('waveform');
+        const timerEl = document.getElementById('timer');
+        const statSeg = document.getElementById('statSeg');
+        const statWords = document.getElementById('statWords');
+        const statWPM = document.getElementById('statWPM');
+
+        const finishBtn = document.getElementById('finishBtn');
+        const analysisPanel = document.getElementById('analysisPanel');
+        const analysisContent = document.getElementById('analysisContent');
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+        let timerInt = null;
+        let elapsed = 0;
+        let totalWords = 0;
+        let segments = 0;
+        let speakStart = null;
+
+        const topics = [
+            'The "Main Character" Syndrome: Why everyone secretly believes they are the protagonist of the world.',
+            'The Beauty of Quitting: Why knowing when to give up is actually a superpower, not a weakness.',
+            'Artificial Intelligence vs. Human Stupidity: Which one is actually the bigger threat to our future?',
+            'The Nostalgia Trap: Why we always think "the good old days" were better than they actually were.',
+            'The Power of "No": How one small word can completely change the trajectory of your life and career.'
+        ];
+        let currentTopic = '';
+
+        // ── Click mic button
+        micBtn.addEventListener('click', () => {
+            isRecording ? stopRecording() : startRecording();
+        });
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioChunks = [];
+                const mime = getBestMime();
+                mediaRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.onstop = () => transcribe(stream);
+                mediaRecorder.start();
+                isRecording = true;
+                speakStart = Date.now();
+                setUI(true);
+                startTimer();
+                removePlaceholder();
+
+                // Show Topic Popup if not already assigned
+                if (!currentTopic) {
+                    currentTopic = topics[Math.floor(Math.random() * topics.length)];
+                    document.getElementById('topicText').textContent = currentTopic;
+                    document.getElementById('topicPopup').classList.add('show');
+                }
+            } catch {
+                setStatus('Microphone access denied', false);
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            }
+            isRecording = false;
+            stopTimer();
+            setUI(false, true); // processing state
+        }
+
+        async function transcribe() {
+            if (!audioChunks.length) { setUI(false); return; }
+            const blob = new Blob(audioChunks, { type: getBestMime() || 'audio/webm' });
+            const blobUrl = URL.createObjectURL(blob);
+            const proc = addProcessing();
+            try {
+                // 1. Upload audio to Gladia
+                const formData = new FormData();
+                formData.append('audio', blob, 'audio.webm');
+                const uploadRes = await fetch('https://api.gladia.io/v2/upload', {
+                    method: 'POST',
+                    headers: { 'x-gladia-key': window.ENV.GLADIA_API_KEY },
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+                if (!uploadRes.ok) throw new Error(uploadData.message || 'Upload failed');
+
+                // 2. Start transcription
+                const transRes = await fetch('https://api.gladia.io/v2/transcription/', {
+                    method: 'POST',
+                    headers: {
+                        'x-gladia-key': window.ENV.GLADIA_API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ audio_url: uploadData.audio_url, language: 'en' })
+                });
+                const transData = await transRes.json();
+                if (!transRes.ok) throw new Error(transData.message || 'Transcription init failed');
+
+                // 3. Poll for result
+                let text = '';
+                while (true) {
+                    const pollRes = await fetch(transData.result_url, {
+                        headers: { 'x-gladia-key': window.ENV.GLADIA_API_KEY }
+                    });
+                    const pollData = await pollRes.json();
+
+                    if (pollData.status === 'done') {
+                        text = pollData.result.transcription.full_transcript || '';
+                        break;
+                    } else if (pollData.status === 'error') {
+                        throw new Error('Transcription failed');
+                    }
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+
+                proc.remove();
+                if (text && text.trim()) {
+                    text = text.trim();
+                    segments++;
+                    const wc = text.split(/\s+/).filter(Boolean).length;
+                    totalWords += wc;
+                    const mins = (Date.now() - speakStart) / 60000;
+                    const wpm = mins > 0 ? Math.round(totalWords / mins) : 0;
+                    addEntry(text, wc, segments);
+                    statSeg.textContent = segments;
+                    statWords.textContent = totalWords;
+                    statWPM.textContent = wpm;
+                    setStatus(`✓ ${segments} segment${segments > 1 ? 's' : ''} transcribed`, true);
+
+                    // Show finish button if we have at least 1 segment
+                    if (segments > 0) {
+                        finishBtn.style.display = 'block';
+                    }
+                } else {
+                    addInfo('No speech detected.');
+                }
+            } catch (e) {
+                proc.remove();
+                addInfo('Error: ' + (e.message || 'Transcription failed'));
+                console.error(e);
+            }
+            setUI(false);
+        }
+
+        // ── Analyze with Gemini ──
+        finishBtn.addEventListener('click', async () => {
+            // Prevent spamming
+            if (finishBtn.disabled) return;
+            finishBtn.disabled = true;
+            finishBtn.textContent = 'ANALYZING...';
+
+            analysisPanel.classList.add('show');
+            analysisContent.innerHTML = `
+                <div class="loading-analyze">
+                    <div class="spin"></div> ANALYZING AUDIO...
+                </div>
+            `;
+
+            // Extract all transcript text
+            const transcriptEntries = document.querySelectorAll('.t-text');
+            let fullText = Array.from(transcriptEntries).map(el => el.textContent).join(' ');
+
+            if (!fullText.trim()) {
+                analysisContent.innerHTML = `<div class="feedback-text">No speech detected to analyze.</div>`;
+                finishBtn.textContent = '🏁 FINISH & ANALYZE';
+                finishBtn.disabled = false;
+                return;
+            }
+
+            try {
+                const prompt = `You are an expert, incredibly strict public speaking coach. Please analyze the following speech transcript and return a structured JSON evaluation. 
+The speaker was given this exact impromptu topic to speak about: "${currentTopic}".
+You must grade them VERY HARSHLY on how well they addressed this specific topic, their clarity, vocabulary, pacing, and confidence. Do not go easy on them.
+Do NOT return markdown, only return a raw, valid JSON object with EXACTLY these keys:
+{
+  "scores": {
+    "Clarity": 85,
+    "Vocabulary": 70,
+    "Confidence": 90,
+    "Pacing": 80
+  },
+  "overall_feedback": "A short, 2-3 sentence constructive feedback on how they did and what they can improve."
+}
+
+Speech Transcript:
+"${fullText}"`;
+
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.ENV.GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { response_mime_type: "application/json" }
+                    })
+                });
+
+                if (!res.ok) throw new Error("Gemini API Error");
+
+                const data = await res.json();
+                const jsonText = data.candidates[0].content.parts[0].text;
+                const analysis = JSON.parse(jsonText);
+
+                // Render UI
+                let html = '';
+                for (const [category, score] of Object.entries(analysis.scores)) {
+                    html += `
+                        <div class="score-group">
+                            <div class="score-header">
+                                <span class="score-label">${category}</span>
+                                <span class="score-value">${score}/100</span>
+                            </div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width: 0%" data-target="${score}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `<div class="feedback-text">${analysis.overall_feedback}</div>`;
+                analysisContent.innerHTML = html;
+
+                // Animate bars
+                setTimeout(() => {
+                    const bars = analysisContent.querySelectorAll('.progress-bar-fill');
+                    bars.forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-target');
+                    });
+                }, 100);
+
+            } catch (err) {
+                console.error(err);
+                analysisContent.innerHTML = `<div class="feedback-text" style="color: var(--red);">Error generating analysis. Please try again.</div>`;
+            }
+
+            finishBtn.textContent = '🏁 FINISH & ANALYZE';
+            finishBtn.disabled = false;
+        });
+
+        // ── UI helpers
+        function setUI(recording, processing = false) {
+            if (recording) {
+                micBtn.classList.add('recording');
+                micBtn.textContent = '⏹';
+                micLabel.textContent = 'STOP & TRANSCRIBE';
+                waveform.classList.add('active');
+                panelStatus.className = 'panel-status recording';
+                statusText.textContent = 'Recording — speak clearly...';
+            } else {
+                micBtn.classList.remove('recording');
+                micBtn.textContent = processing ? '⏳' : '🎤';
+                micBtn.disabled = processing;
+                micLabel.textContent = processing ? 'TRANSCRIBING...' : 'PRESS TO SPEAK';
+                waveform.classList.remove('active');
+                if (!processing) {
+                    panelStatus.className = segments ? 'panel-status done' : 'panel-status';
+                    if (!segments) statusText.textContent = 'Ready — press the mic to start';
+                }
+            }
+        }
+
+        function setStatus(msg, done) {
+            panelStatus.className = `panel-status ${done ? 'done' : ''}`;
+            statusText.textContent = msg;
+        }
+
+        function removePlaceholder() {
+            const ph = transcriptB.querySelector('.empty-hint');
+            if (ph) ph.remove();
+        }
+
+        function addEntry(text, wc, num) {
+            const el = document.createElement('div');
+            el.className = 't-entry'; el.style.opacity = '1'; el.style.display = 'flex';
+            el.innerHTML = `
+        <div class="t-tag"><span>SEGMENT</span><span class="t-num">#${num}</span></div>
+        <div class="t-text">${text}</div>
+        <div class="t-wc">${wc} word${wc !== 1 ? 's' : ''}</div>`;
+            transcriptB.appendChild(el);
+            transcriptB.scrollTop = transcriptB.scrollHeight;
+        }
+
+        function addProcessing() {
+            const el = document.createElement('div');
+            el.className = 't-processing';
+            el.innerHTML = '<div class="spin"></div><span>Transcribing...</span>';
+            transcriptB.appendChild(el);
+            transcriptB.scrollTop = transcriptB.scrollHeight;
+            return el;
+        }
+
+        function addInfo(msg) {
+            const el = document.createElement('div');
+            el.style.cssText = 'font-size:11px;color:rgba(255,255,255,0.3);padding:2px 0;';
+            el.textContent = msg;
+            transcriptB.appendChild(el);
+        }
+
+        // ── Timer
+        function startTimer() {
+            elapsed = 0;
+            timerInt = setInterval(() => {
+                elapsed++;
+                const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const s = String(elapsed % 60).padStart(2, '0');
+                timerEl.textContent = `${m}:${s}`;
+            }, 1000);
+        }
+        function stopTimer() { clearInterval(timerInt); }
+
+        function getBestMime() {
+            return ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4']
+                .find(t => MediaRecorder.isTypeSupported(t)) || '';
+        }
+    </script>
+</body>
+
+</html>

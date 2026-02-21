@@ -1,0 +1,1262 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mock Interview – Skill Forge</title>
+    <!-- Use local config logic to avoid leaking github API keys -->
+    <script src="config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --gold: #F5C518;
+            --dark: #060810;
+            --navy: #0d1117;
+            --green: #48bb78;
+            --red: #fc6060;
+            --teal: #22d3ee;
+            --pixel: 'Press Start 2P', monospace;
+            --body: 'Inter', sans-serif;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: var(--dark);
+            color: #fff;
+            font-family: var(--body);
+            overflow: hidden;
+        }
+
+        /* ── Scanline overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.07) 2px,
+                    rgba(0, 0, 0, 0.07) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ── Top HUD bar */
+        .hud-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 24px;
+            background: rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(245, 197, 24, 0.25);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 100;
+            gap: 16px;
+        }
+
+        .hud-logo {
+            font-family: var(--pixel);
+            font-size: 10px;
+            color: var(--gold);
+            text-shadow: 0 0 12px rgba(245, 197, 24, 0.5);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hud-title {
+            font-family: var(--pixel);
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            flex: 1;
+        }
+
+        .hud-timer {
+            font-family: var(--pixel);
+            font-size: 12px;
+            color: var(--teal);
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            padding: 6px 14px;
+            border-radius: 6px;
+            min-width: 90px;
+            text-align: center;
+        }
+
+        .hud-xp {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .xp-label {
+            font-family: var(--pixel);
+            font-size: 7px;
+            color: var(--gold);
+        }
+
+        .xp-bar-wrap {
+            width: 100px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 99px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .xp-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold), #ffad00);
+            border-radius: 99px;
+            transition: width 0.6s ease;
+        }
+
+        /* ── Main layout */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            grid-template-rows: 1fr auto;
+            height: calc(100vh - 55px);
+            gap: 0;
+        }
+
+        /* ── Video area */
+        .video-area {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+            padding: 16px;
+            background: #080b11;
+            position: relative;
+        }
+
+        /* Grid: Alex on top-left, user on top-right */
+        .video-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr;
+            gap: 12px;
+            padding: 16px;
+            background: #080b11;
+        }
+
+        .video-tile {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-tile.alex-tile {
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.06), inset 0 0 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-tile.alex-tile.speaking {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 2px var(--teal), 0 0 40px rgba(34, 211, 238, 0.2);
+            animation: speakPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes speakPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 2px var(--teal), 0 0 40px rgba(34, 211, 238, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 0 4px var(--teal), 0 0 60px rgba(34, 211, 238, 0.35);
+            }
+        }
+
+        .video-tile.user-tile {
+            border-color: rgba(72, 187, 120, 0.3);
+        }
+
+        .video-tile.user-tile.speaking {
+            border-color: var(--green);
+            box-shadow: 0 0 0 2px var(--green), 0 0 40px rgba(72, 187, 120, 0.2);
+            animation: userSpeakPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes userSpeakPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 2px var(--green), 0 0 40px rgba(72, 187, 120, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 0 4px var(--green), 0 0 60px rgba(72, 187, 120, 0.35);
+            }
+        }
+
+        /* Alex pixel image - fills the tile */
+        .alex-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            image-rendering: pixelated;
+            filter: contrast(1.05) saturate(0.95);
+        }
+
+        /* Vignette on Alex's tile */
+        .alex-tile::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+            pointer-events: none;
+        }
+
+        /* User camera tile */
+        .user-cam {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            transform: scaleX(-1);
+            /* mirror */
+        }
+
+        .user-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0e1520 0%, #141d2e 100%);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a4f, #2a5470);
+            border: 3px solid rgba(72, 187, 120, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .user-name-tag {
+            font-family: var(--pixel);
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        /* Name tags on video tiles */
+        .tile-name {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tile-name-text {
+            font-family: var(--pixel);
+            font-size: 7px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
+            padding: 5px 10px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+        }
+
+        .tile-role {
+            font-size: 10px;
+            background: rgba(34, 211, 238, 0.15);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            color: var(--teal);
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .tile-role.you {
+            background: rgba(72, 187, 120, 0.12);
+            border-color: rgba(72, 187, 120, 0.3);
+            color: var(--green);
+        }
+
+        /* Live dot */
+        .live-dot {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .live-dot .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #aaa;
+        }
+
+        .live-dot.active .dot {
+            background: var(--red);
+            animation: blink 1s step-end infinite;
+        }
+
+        .live-dot.active {
+            color: var(--red);
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* ── Side panel */
+        .side-panel {
+            background: rgba(8, 11, 17, 0.95);
+            border-left: 1px solid rgba(255, 255, 255, 0.07);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .panel-title {
+            font-family: var(--pixel);
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            margin-bottom: 2px;
+        }
+
+        .panel-status {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color 0.3s;
+        }
+
+        .panel-status.live {
+            color: var(--green);
+        }
+
+        /* Transcript */
+        .transcript {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        }
+
+        .transcript-empty {
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+            text-align: center;
+            margin: auto;
+        }
+
+        .msg {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            animation: msgIn 0.2s ease;
+        }
+
+        @keyframes msgIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .msg.alex {
+            align-items: flex-start;
+        }
+
+        .msg.user {
+            align-items: flex-end;
+        }
+
+        .msg-who {
+            font-family: var(--pixel);
+            font-size: 6px;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .msg.alex .msg-who {
+            color: var(--teal);
+        }
+
+        .msg.user .msg-who {
+            color: var(--green);
+        }
+
+        .msg-text {
+            font-size: 12px;
+            line-height: 1.5;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 90%;
+        }
+
+        .msg.alex .msg-text {
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.12);
+            border-bottom-left-radius: 3px;
+        }
+
+        .msg.user .msg-text {
+            background: rgba(72, 187, 120, 0.1);
+            border: 1px solid rgba(72, 187, 120, 0.15);
+            border-bottom-right-radius: 3px;
+        }
+
+        /* ── Control bar */
+        .controls {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-interview {
+            width: 100%;
+            padding: 14px;
+            font-family: var(--pixel);
+            font-size: 9px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-interview.start {
+            background: linear-gradient(135deg, #276749, #38a169);
+            color: #fff;
+            box-shadow: 0 4px 0 #1a5235, 0 6px 20px rgba(56, 161, 105, 0.3);
+        }
+
+        .btn-interview.start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #1a5235, 0 10px 30px rgba(56, 161, 105, 0.4);
+        }
+
+        .btn-interview.start:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1a5235;
+        }
+
+        .btn-interview.end {
+            background: linear-gradient(135deg, #9b2c2c, #e53e3e);
+            color: #fff;
+            box-shadow: 0 4px 0 #6e1f1f, 0 6px 20px rgba(229, 62, 62, 0.3);
+        }
+
+        .btn-interview.end:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #6e1f1f, 0 10px 30px rgba(229, 62, 62, 0.4);
+        }
+
+        .btn-interview.end:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #6e1f1f;
+        }
+
+        .mic-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.35);
+            padding: 0 4px;
+        }
+
+        .mic-icon {
+            font-size: 14px;
+        }
+
+        /* ── Bottom info bar */
+        .info-bar {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            padding: 8px 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .info-pill .icon {
+            font-size: 14px;
+        }
+
+        /* Loading / connecting overlay */
+        .connect-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 8, 16, 0.92);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(4px);
+            transition: opacity 0.4s;
+        }
+
+        .connect-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .connect-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(34, 211, 238, 0.15);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .connect-text {
+            font-family: var(--pixel);
+            font-size: 9px;
+            color: var(--teal);
+            letter-spacing: 2px;
+        }
+
+        /* Pixel corner decorations on video tiles */
+        .corner-tl,
+        .corner-tr,
+        .corner-bl,
+        .corner-br {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .corner-tl {
+            top: 8px;
+            left: 8px;
+            border-top: 2px solid rgba(34, 211, 238, 0.4);
+            border-left: 2px solid rgba(34, 211, 238, 0.4);
+        }
+
+        .corner-tr {
+            top: 8px;
+            right: 8px;
+            border-top: 2px solid rgba(34, 211, 238, 0.4);
+            border-right: 2px solid rgba(34, 211, 238, 0.4);
+        }
+
+        .corner-bl {
+            bottom: 8px;
+            left: 8px;
+            border-bottom: 2px solid rgba(34, 211, 238, 0.4);
+            border-left: 2px solid rgba(34, 211, 238, 0.4);
+        }
+
+        .corner-br {
+            bottom: 8px;
+            right: 8px;
+            border-bottom: 2px solid rgba(34, 211, 238, 0.4);
+            border-right: 2px solid rgba(34, 211, 238, 0.4);
+        }
+
+        .user-tile .corner-tl,
+        .user-tile .corner-tr,
+        .user-tile .corner-bl,
+        .user-tile .corner-br {
+            border-color: rgba(72, 187, 120, 0.35);
+        }
+
+        /* Emotion badge on Alex tile */
+        #emotionBadge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+        }
+
+        /* Audio visualizer bars */
+        .viz {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3px;
+            align-items: flex-end;
+            height: 24px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .viz.active {
+            opacity: 1;
+        }
+
+        .viz-bar {
+            width: 3px;
+            background: var(--teal);
+            border-radius: 2px;
+            min-height: 3px;
+            animation: vizAnim 0.5s ease-in-out infinite;
+        }
+
+        .viz-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .viz-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .viz-bar:nth-child(4) {
+            animation-delay: 0.05s;
+        }
+
+        .viz-bar:nth-child(5) {
+            animation-delay: 0.15s;
+        }
+
+        @keyframes vizAnim {
+
+            0%,
+            100% {
+                height: 3px;
+            }
+
+            50% {
+                height: 20px;
+            }
+        }
+
+        .user-viz .viz-bar {
+            background: var(--green);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Connecting overlay (shown while WebSocket initialises) -->
+    <div class="connect-overlay hidden" id="connectOverlay">
+        <div class="connect-spinner"></div>
+        <div class="connect-text" id="overlayText">CONNECTING...</div>
+    </div>
+
+    <!-- ── HUD top bar -->
+    <header class="hud-bar">
+        <a href="index.html" class="hud-logo">🪙 Skill Forge</a>
+        <div class="hud-title">⚔ MOCK INTERVIEW – LEVEL 1</div>
+        <div class="hud-timer" id="timer">00:00</div>
+        <div class="hud-xp">
+            <span class="xp-label">XP</span>
+            <div class="xp-bar-wrap">
+                <div class="xp-bar-fill" id="xpBar"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Main grid -->
+    <div class="main">
+
+        <!-- Left: video tiles -->
+        <div class="video-area">
+
+            <!-- Alex tile -->
+            <div class="video-tile alex-tile" id="alexTile">
+                <div class="corner-tl"></div>
+                <div class="corner-tr"></div>
+                <div class="corner-bl"></div>
+                <div class="corner-br"></div>
+
+                <img src="images/Alex_Interviewer.png" alt="Alex – Interviewer" class="alex-img" id="alexImg" />
+
+                <!-- Alex audio visualizer -->
+                <div class="viz" id="alexViz">
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                </div>
+
+                <div id="emotionBadge"></div>
+
+                <div class="live-dot" id="liveDot">
+                    <span class="dot"></span> REC
+                </div>
+                <div class="tile-name">
+                    <span class="tile-name-text">ALEX</span>
+                    <span class="tile-role">INTERVIEWER</span>
+                </div>
+            </div>
+
+            <!-- User tile -->
+            <div class="video-tile user-tile" id="userTile">
+                <div class="corner-tl"></div>
+                <div class="corner-tr"></div>
+                <div class="corner-bl"></div>
+                <div class="corner-br"></div>
+
+                <!-- Will become <video> when camera is live; fallback placeholder -->
+                <div class="user-placeholder" id="userPlaceholder">
+                    <div class="user-avatar">🧑‍💻</div>
+                    <span class="user-name-tag">YOU</span>
+                </div>
+                <video class="user-cam" id="userVideo" autoplay muted playsinline style="display:none;"></video>
+
+                <!-- User audio visualizer -->
+                <div class="viz user-viz" id="userViz">
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                    <div class="viz-bar"></div>
+                </div>
+
+                <div class="tile-name">
+                    <span class="tile-name-text">YOU</span>
+                    <span class="tile-role you">CANDIDATE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: side panel -->
+        <div class="side-panel">
+            <div class="panel-header">
+                <div class="panel-title">TRANSCRIPT</div>
+                <div class="panel-status" id="panelStatus">○ Not connected</div>
+            </div>
+
+            <div class="transcript" id="transcript">
+                <span class="transcript-empty">Start the interview to begin your session with Alex</span>
+            </div>
+
+            <div class="controls">
+                <button class="btn-interview start" id="toggleBtn">🎙&nbsp; START INTERVIEW</button>
+                <button class="btn-interview" id="recordBtn"
+                    style="display:none; background: linear-gradient(135deg, #4c1d95, #6b21a8); color: #fff; margin-top: 8px; box-shadow: 0 4px 0 #2e1065, 0 6px 20px rgba(107, 33, 168, 0.3); border: none; padding: 14px; border-radius: 10px; font-family: var(--pixel); font-size: 9px; cursor: pointer;">🎤&nbsp;
+                    PRESS TO SPEAK</button>
+                <div class="mic-status" id="micStatus">
+                    <span class="mic-icon">🎤</span>
+                    <span>Microphone not active</span>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main -->
+
+    <script>
+        // ── Credentials
+        const GEMINI_API_KEY = window.ENV.GEMINI_API_KEY;
+        const YOURVOICE_API_KEY = window.ENV.YOURVOICE_API_KEY;
+        const GLADIA_API_KEY = window.ENV.GLADIA_API_KEY;
+
+        const SYSTEM_PROMPT = `You are Alex, an expert, incredibly strict Senior Software Engineering interviewer. 
+Your goal is to Grill the candidate on their skills.
+The questions you ask MUST BE SHORT, simple, and entry-level. Do not ask overly long or complex questions.
+However, you must grade their answers EXTREMELY HARSHLY. DO NOT GO EASY ON THEM.
+You must conduct exactly 5 questions total.
+For the first 4 questions, ask a short question, then severely but constructively critique their previous answer. 
+For the 5th and final response, DO NOT ask a new question. Instead, tell them the interview is over and give them a harsh but fair final rating out of 10. You MUST also provide a detailed summary of exactly where they went wrong in their answers, and explicitly list areas they need to improve.
+
+CRITICAL REQUIREMENT: You must return every response EXACTLY as a JSON object, with absolutely no markdown formatting or conversational text outside of the JSON block. Use this exact schema:
+{
+  "feedback": "Short, strict specific feedback on what they just said, written directly to the user (e.g. 'Your explanation of inheritance was incredibly shallow.'). Keep it brief.",
+  "emotion": "One of: joy, confidence, interest, excitement, calm, anxiety, concentration, confusion",
+  "xp_awarded": an integer between 0 and 20 based on the quality of their technical answer (be stingy with points!),
+  "next_question": "The next conversational interview question. KEEP IT SHORT. If you are on the 5th and final response, put your final evaluation score and the detailed breakdown of their mistakes and areas of improvement here instead of a question."
+}`;
+
+        // ── DOM refs
+        const toggleBtn = document.getElementById('toggleBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const panelStatus = document.getElementById('panelStatus');
+        const transcriptEl = document.getElementById('transcript');
+        const timerEl = document.getElementById('timer');
+        const xpBarEl = document.getElementById('xpBar');
+        const alexTile = document.getElementById('alexTile');
+        const userTile = document.getElementById('userTile');
+        const liveDot = document.getElementById('liveDot');
+        const alexViz = document.getElementById('alexViz');
+        const userViz = document.getElementById('userViz');
+        const connectOverlay = document.getElementById('connectOverlay');
+        const overlayText = document.getElementById('overlayText');
+        const userVideo = document.getElementById('userVideo');
+        const userPlaceholder = document.getElementById('userPlaceholder');
+        const micStatus = document.getElementById('micStatus');
+        const emotionBadge = document.getElementById('emotionBadge');
+
+        // ── State
+        let mediaStream = null;
+        let isConnected = false;
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let timerInterval = null;
+        let elapsed = 0;
+        let xp = 0;
+
+        // Custom Engine State
+        let chatHistory = [];
+        let recognition = null; // Browser fallback transcription
+        let fallbackTranscript = "";
+
+        // ── Timer
+        function startTimer() {
+            elapsed = 0;
+            timerInterval = setInterval(() => {
+                elapsed++;
+                const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const s = String(elapsed % 60).padStart(2, '0');
+                timerEl.textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // ── Buttons
+        toggleBtn.addEventListener('click', () => {
+            isConnected ? disconnect() : connect();
+        });
+
+        recordBtn.addEventListener('click', () => {
+            if (isRecording) {
+                stopAnswering();
+            } else {
+                startAnswering();
+            }
+        });
+
+        // ── Connect
+        async function connect() {
+            showOverlay('STARTING INTERVIEW...');
+            try {
+                // Camera
+                try {
+                    const camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    mediaStream = camStream;
+                    userVideo.srcObject = camStream;
+                    userVideo.style.display = 'block';
+                    userPlaceholder.style.display = 'none';
+                } catch {
+                    // Fallback to audio-only if no camera
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                }
+
+                // Initialize Web Speech Recognition fallback just in case the API fails
+                try {
+                    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (SR) {
+                        recognition = new SR();
+                        recognition.continuous = true;
+                        recognition.interimResults = true;
+                        recognition.onresult = e => {
+                            for (let i = e.resultIndex; i < e.results.length; i++) {
+                                if (e.results[i].isFinal) fallbackTranscript += e.results[i][0].transcript + " ";
+                            }
+                        };
+                    }
+                } catch (e) {
+                    console.log("Web Speech API not perfectly supported, proceeding without local fallback.");
+                }
+
+                hideOverlay();
+                setConnected(true);
+                startTimer();
+
+                // Trigger Alex's first introduction
+                generateAlexResponse("Please introduce yourself and state what role you are applying for.", true);
+
+            } catch (err) {
+                hideOverlay();
+                setStatus('Microphone access denied', false);
+            }
+        }
+
+        // ── Disconnect
+        function disconnect() {
+            if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+            if (isRecording) stopAnswering(true);
+            window.speechSynthesis.cancel(); // Stop TTS
+            userVideo.style.display = 'none';
+            userPlaceholder.style.display = 'flex';
+            userVideo.srcObject = null;
+            chatHistory = [];
+            setConnected(false);
+            stopTimer();
+        }
+
+        // ── Audio Recording
+        function startAnswering() {
+            if (!isConnected) return;
+            isRecording = true;
+            audioChunks = [];
+            fallbackTranscript = "";
+
+            // Start audio recorder
+            const audioStream = new MediaStream([mediaStream.getAudioTracks()[0]]);
+            mediaRecorder = new MediaRecorder(audioStream);
+            mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+            mediaRecorder.onstop = processAnswer;
+            mediaRecorder.start();
+
+            // Start native text recognition fallback
+            if (recognition) recognition.start();
+
+            recordBtn.textContent = '⏹ FINISH ANSWER';
+            recordBtn.style.background = 'linear-gradient(135deg, #b91c1c, #dc2626)';
+            userTile.classList.add('speaking');
+            userViz.classList.add('active');
+        }
+
+        function stopAnswering(forceCancel = false) {
+            isRecording = false;
+            userTile.classList.remove('speaking');
+            userViz.classList.remove('active');
+            recordBtn.textContent = '⏳ PROCESSING...';
+            recordBtn.disabled = true;
+            recordBtn.style.background = 'linear-gradient(135deg, #475569, #64748b)';
+
+            if (recognition) recognition.stop();
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                if (forceCancel) mediaRecorder.onstop = null;
+                mediaRecorder.stop();
+            }
+        }
+
+        // ── Process Transcription & Gemini
+        async function processAnswer() {
+            // Give Web Speech API 500ms to flush its final 'onresult' event after stopping
+            await new Promise(r => setTimeout(r, 600));
+
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            let finalUserText = "";
+
+            try {
+                // Use Gladia because it's guaranteed to work reliably 
+                // Wait for audio upload
+                const formData = new FormData();
+                formData.append('audio', blob, 'audio.webm');
+                const uploadRes = await fetch('https://api.gladia.io/v2/upload', {
+                    method: 'POST',
+                    headers: { 'x-gladia-key': GLADIA_API_KEY },
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+                if (!uploadRes.ok) throw new Error(uploadData.message || 'Upload failed');
+
+                // Start Transcription process
+                const transRes = await fetch('https://api.gladia.io/v2/transcription/', {
+                    method: 'POST',
+                    headers: {
+                        'x-gladia-key': GLADIA_API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ audio_url: uploadData.audio_url, language: 'en' })
+                });
+                const transData = await transRes.json();
+                if (!transRes.ok) throw new Error(transData.message || 'Transcription init failed');
+
+                // Poll for Transcribed Result
+                while (true) {
+                    const pollRes = await fetch(transData.result_url, {
+                        headers: { 'x-gladia-key': GLADIA_API_KEY }
+                    });
+                    const pollData = await pollRes.json();
+
+                    if (pollData.status === 'done') {
+                        finalUserText = pollData.result.transcription.full_transcript || fallbackTranscript;
+                        break;
+                    } else if (pollData.status === 'error') {
+                        throw new Error('Transcription failed');
+                    }
+                    await new Promise(r => setTimeout(r, 1000));
+                }
+            } catch (err) {
+                console.warn("Gladia transcription failed, trying local fallback:", err);
+                console.log("Captured Fallback Transcript:", fallbackTranscript);
+                finalUserText = fallbackTranscript.trim();
+
+                // Ultimate fallback if they didn't speak or recognition failed
+                if (!finalUserText) {
+                    finalUserText = "I encountered an error with my microphone, could you repeat the question?";
+                }
+            }
+
+            addMsg('user', finalUserText);
+            await generateAlexResponse(finalUserText, false);
+
+            // Reset Record Button 
+            recordBtn.textContent = '🎤 PRESS TO SPEAK';
+            recordBtn.style.background = 'linear-gradient(135deg, #4c1d95, #6b21a8)';
+            recordBtn.disabled = false;
+        }
+
+        // ── Gemini AI Logic
+        async function generateAlexResponse(userText, isInitial) {
+            setStatus('Alex is thinking...', true);
+
+            // Always push the user's input/context to the history
+            chatHistory.push({ role: "user", parts: [{ text: userText }] });
+
+            const payload = {
+                systemInstruction: { role: 'system', parts: [{ text: SYSTEM_PROMPT }] },
+                contents: chatHistory,
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error.message);
+
+                const aiResponseText = data.candidates[0].content.parts[0].text;
+                // Append Alex's response to the history so he remembers what he said
+                chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
+
+                // Parse the locked JSON structure
+                const parsed = JSON.parse(aiResponseText);
+
+                // Add the feedback toast to the bottom info bar if it exists
+                if (parsed.feedback && !isInitial) {
+                    const toast = document.createElement('div');
+                    toast.className = 'info-pill';
+                    toast.style.color = '#fff';
+                    toast.style.background = 'rgba(168, 85, 247, 0.2)';
+                    toast.style.padding = '4px 12px';
+                    toast.style.borderRadius = '12px';
+                    toast.style.border = '1px solid var(--purple)';
+                    toast.innerHTML = `<span class="icon">💡</span> ${parsed.feedback}`;
+                    const infoBar = document.querySelector('.info-bar');
+                    if (infoBar) {
+                        infoBar.innerHTML = '';
+                        infoBar.appendChild(toast);
+                    }
+                }
+
+                gainXP(parsed.xp_awarded || 0);
+                showEmotion(parsed.emotion || 'calm');
+                addMsg('alex', parsed.next_question);
+                setStatus('Alex is speaking', true);
+
+                // Web Speech API Text-to-Speech
+                speakAlex(parsed.next_question);
+
+            } catch (e) {
+                console.error("Gemini AI Error:", e);
+                setStatus('Error communicating with AI evaluator', false);
+                addMsg('alex', "I'm having trouble connecting to my assessment network. Please try again.");
+                recordBtn.textContent = '🎤 PRESS TO SPEAK';
+                recordBtn.style.background = 'linear-gradient(135deg, #4c1d95, #6b21a8)';
+                recordBtn.disabled = false;
+            }
+        }
+
+        // ── Web Speech TTS Engine
+        function speakAlex(text) {
+            if (!window.speechSynthesis) return;
+            const utter = new SpeechSynthesisUtterance(text);
+
+            // Find a professional sounding voice
+            const voices = window.speechSynthesis.getVoices();
+            const alexVoice = voices.find(v => v.name.includes('Google UK English Male') || v.name.includes('Male')) || voices[0];
+            if (alexVoice) utter.voice = alexVoice;
+
+            utter.rate = 1.05; // Slightly faster for conversational pace
+            utter.pitch = 0.95;
+
+            utter.onstart = () => {
+                alexTile.classList.add('speaking');
+                alexViz.classList.add('active');
+            };
+
+            utter.onend = () => {
+                alexTile.classList.remove('speaking');
+                alexViz.classList.remove('active');
+                setStatus('Ready — Give your answer', true);
+            };
+
+            window.speechSynthesis.speak(utter);
+        }
+
+        // Load voices dynamically due to browser asynchronous voice loading
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+
+        // ── UI helpers
+        function setConnected(val) {
+            isConnected = val;
+            if (val) {
+                toggleBtn.textContent = '⏹  END INTERVIEW';
+                toggleBtn.className = 'btn-interview end';
+                panelStatus.textContent = '● Live – Connecting with Alex';
+                panelStatus.className = 'panel-status live';
+                liveDot.className = 'live-dot active';
+                micStatus.innerHTML = '<span class="icon">🎙</span><span>Camera Connected</span>';
+                recordBtn.style.display = 'block';
+                const ph = transcriptEl.querySelector('.transcript-empty');
+                if (ph) ph.remove();
+            } else {
+                toggleBtn.textContent = '🎙  START INTERVIEW';
+                toggleBtn.className = 'btn-interview start';
+                panelStatus.textContent = '○ Not connected';
+                panelStatus.className = 'panel-status';
+                liveDot.className = 'live-dot';
+                alexTile.classList.remove('speaking');
+                alexViz.classList.remove('active');
+                micStatus.innerHTML = '<span class="mic-icon">🎤</span><span>Microphone not active</span>';
+                recordBtn.style.display = 'none';
+
+                const infoBar = document.querySelector('.info-bar');
+                if (infoBar) infoBar.innerHTML = `<div class="info-pill"><span class="icon">💡</span><span>AI monitors tone & clarity</span></div>`;
+            }
+        }
+
+        function setStatus(msg, live) {
+            panelStatus.textContent = msg;
+            panelStatus.className = live ? 'panel-status live' : 'panel-status';
+        }
+
+        function addMsg(who, text) {
+            const wrap = document.createElement('div');
+            wrap.className = `msg ${who}`;
+
+            const label = document.createElement('div');
+            label.className = 'msg-who';
+            label.textContent = who === 'alex' ? 'ALEX' : 'YOU';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-text';
+            bubble.textContent = text;
+
+            wrap.appendChild(label);
+            wrap.appendChild(bubble);
+            transcriptEl.appendChild(wrap);
+            transcriptEl.scrollTop = transcriptEl.scrollHeight;
+        }
+
+        function gainXP(pts) {
+            xp = Math.min(100, xp + pts);
+            xpBarEl.style.width = xp + '%';
+        }
+
+        function showEmotion(emotion) {
+            const map = {
+                joy: '😊 Joyful', confidence: '💪 Confident', interest: '👀 Interested',
+                excitement: '🔥 Excited', calm: '😌 Calm', anxiety: '😰 Anxious',
+                concentration: '🧠 Focused', confusion: '😕 Confused',
+            };
+            const label = map[emotion] || emotion;
+            emotionBadge.textContent = label;
+            emotionBadge.style.display = 'block';
+            clearTimeout(emotionBadge._t);
+            emotionBadge._t = setTimeout(() => { emotionBadge.style.display = 'none'; }, 4000);
+        }
+
+        function showOverlay(text) {
+            overlayText.textContent = text;
+            connectOverlay.classList.remove('hidden');
+        }
+
+        function hideOverlay() {
+            connectOverlay.classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>

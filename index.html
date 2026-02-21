@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skill Forge – Start Your Coding Adventure</title>
+    <meta name="description"
+        content="Assess yourself with excitement like never before. Explore 250+ hours of free interactive coding lessons." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <span class="logo-coin">🪙</span>
+                <span class="logo-text">Skill Forge</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#courses" id="practiceNav">Practice</a></li>
+                <li><a href="#">Community <span class="chevron">▾</span></a></li>
+                <li><a href="#">Pricing</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="nav-icon-btn" id="searchBtn" aria-label="Search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </button>
+                <button class="nav-icon-btn" id="themeBtn" aria-label="Toggle theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                </button>
+                <a href="#" class="btn-signup">Sign up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="hero">
+
+        <!-- Fullscreen animated background -->
+        <img src="images/hero_bg.gif" alt="" class="hero-bg-gif" aria-hidden="true" />
+
+        <!-- Text overlay – centered, minimal -->
+        <div class="hero-content">
+            <p class="hero-tagline">START YOUR</p>
+            <img src="images/LandingPage_Text.gif" alt="Coding Adventure" class="hero-title-gif" />
+            <p class="hero-subtitle">Assess yourself with excitement like never before. ✦ ◇</p>
+            <a href="#courses" class="btn-cta">Get started</a>
+        </div>
+
+        <!-- Scroll cue -->
+        <div class="scroll-cue">
+            <span>scroll</span>
+            <div class="scroll-arrow">▼</div>
+        </div>
+
+    </section>
+
+
+    <!-- ===== COURSES SECTION ===== -->
+    <section class="courses-section" id="courses">
+        <div class="courses-inner">
+            <h2 class="courses-heading">The one not-boring stop<br />to challenge yourself</h2>
+            <p class="courses-sub">
+                <span class="accent-text">Learn to code with fun</span>, interactive courses handcrafted by industry
+                experts and educators.
+            </p>
+
+            <!-- Filter Row -->
+            <div class="filter-row">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" placeholder="Search..." id="courseSearch" />
+                </div>
+                <div class="filter-tags">
+                    <button class="tag active" id="tag-popular">All</button>
+                    <button class="tag" id="tag-coding">Coding</button>
+                    <button class="tag" id="tag-communication">Communication</button>
+                    <button class="tag" id="tag-iot">IoT</button>
+                    <button class="tag" id="tag-data">Data</button>
+                </div>
+            </div>
+
+            <!-- Course Cards -->
+            <div class="courses-grid" id="coursesGrid">
+
+                <div class="course-card" data-category="popular coding">
+                    <div class="card-img-wrap">
+                        <div class="card-img python-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Python</h3>
+                        <p class="card-desc">Learn programming fundamentals such as variables, loops, functions, and
+                            more.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 4 hrs</span>
+                            <span class="card-meta">⭐ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="popular coding">
+                    <div class="card-img-wrap">
+                        <div class="card-img html-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">HTML</h3>
+                        <p class="card-desc">Create your first website with HTML, the standard language for web content.
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 3 hrs</span>
+                            <span class="card-meta">⭐ 4.8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="popular coding">
+                    <div class="card-img-wrap">
+                        <div class="card-img css-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">CSS</h3>
+                        <p class="card-desc">Learn to use CSS selectors and properties to style your web pages
+                            beautifully.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 3 hrs</span>
+                            <span class="card-meta">⭐ 4.7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="popular data">
+                    <div class="card-img-wrap">
+                        <div class="card-img ai-bg"></div>
+                        <span class="card-badge pro-badge">PRO</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Machine Learning</h3>
+                        <p class="card-desc">Dive into supervised and unsupervised learning with real-world datasets.
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 8 hrs</span>
+                            <span class="card-meta">⭐ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="popular coding iot">
+                    <div class="card-img-wrap">
+                        <div class="card-img js-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">JavaScript</h3>
+                        <p class="card-desc">Master the language of the web — events, DOM manipulation, and async code.
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 6 hrs</span>
+                            <span class="card-meta">⭐ 4.8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="popular iot">
+                    <div class="card-img-wrap">
+                        <div class="card-img game-bg"></div>
+                        <span class="card-badge pro-badge">PRO</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Game Development</h3>
+                        <p class="card-desc">Build 2D games from scratch using Pygame with pixel art graphics.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 10 hrs</span>
+                            <span class="card-meta">⭐ 5.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="data">
+                    <div class="card-img-wrap">
+                        <div class="card-img data-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Data Science</h3>
+                        <p class="card-desc">Analyze and visualize data with pandas, NumPy, and matplotlib.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 7 hrs</span>
+                            <span class="card-meta">⭐ 4.8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="data">
+                    <div class="card-img-wrap">
+                        <div class="card-img sql-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">SQL</h3>
+                        <p class="card-desc">Query and manage databases to unlock insights from your data.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 4 hrs</span>
+                            <span class="card-meta">⭐ 4.6</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="popular">
+                    <div class="card-img-wrap">
+                        <div class="card-img cmd-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Command Line</h3>
+                        <p class="card-desc">Navigate your computer like a pro using the terminal and shell commands.
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 2 hrs</span>
+                            <span class="card-meta">⭐ 4.7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="communication">
+                    <div class="card-img-wrap">
+                        <div class="card-img debate-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Debate</h3>
+                        <p class="card-desc">Master the art of argumentation — build compelling cases, respond under
+                            pressure, and win any debate.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 5 hrs</span>
+                            <span class="card-meta">⭐ 4.8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="communication" id="interviewCard">
+                    <div class="card-img-wrap">
+                        <div class="card-img interview-bg"></div>
+                        <span class="card-badge pro-badge">PRO</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Interview</h3>
+                        <p class="card-desc">Ace any interview with confidence — practice common questions, body
+                            language, and storytelling techniques.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 4 hrs</span>
+                            <span class="card-meta">⭐ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="communication" id="speakingCard" style="cursor:pointer">
+                    <div class="card-img-wrap">
+                        <div class="card-img speaking-bg"></div>
+                        <span class="card-badge">FREE</span>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-label">COURSE</span>
+                        <h3 class="card-title">Public Speaking</h3>
+                        <p class="card-desc">Conquer stage fright and captivate any audience — from classroom
+                            presentations to TED-style talks.</p>
+                        <div class="card-footer">
+                            <span class="card-meta">🕐 6 hrs</span>
+                            <span class="card-meta">⭐ 4.9</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /courses-grid -->
+
+            <div class="view-all-wrap">
+                <a href="#" class="btn-view-all">View all courses →</a>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features-section">
+        <div class="features-inner">
+            <h2 class="features-heading">Why <span class="gold-text">Skill Forge</span>?</h2>
+            <p class="features-sub">We believe learning to code should feel like an adventure, not a chore.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Quest-Based Learning</h3>
+                    <p>Level up through structured learning paths that feel like an RPG campaign.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚔️</div>
+                    <h3>Interactive Challenges</h3>
+                    <p>Real coding problems you solve directly in your browser — no setup needed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Earn XP & Badges</h3>
+                    <p>Track progress visually and collect achievements that show your growth.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧙</div>
+                    <h3>Expert Educators</h3>
+                    <p>Courses crafted by industry professionals who make complex topics simple.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <p class="cta-pixel-tag">READY TO PLAY?</p>
+            <h2 class="cta-heading">Your coding quest<br /><span class="gold-text">starts today.</span></h2>
+            <p class="cta-sub">Join millions of learners and take your first step into the world of code.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn-cta">Get started for free</a>
+                <a href="#courses" class="btn-secondary">Browse courses</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="logo-coin">🪙</span>
+                <span class="logo-text">Skill Forge</span>
+                <p class="footer-tagline">The most fun way to learn to code.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Learn</h4>
+                    <ul>
+                        <li><a href="#">Python</a></li>
+                        <li><a href="#">JavaScript</a></li>
+                        <li><a href="#">HTML & CSS</a></li>
+                        <li><a href="#">SQL</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Twitter / X</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 Skill Forge, Inc. All rights reserved.</span>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
