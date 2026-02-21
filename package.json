@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@humeai/voice-react": "^0.2.14",
+    "hume": "^0.15.13",
+    "node-record-lpcm16": "^1.0.1"
+  }
+}
