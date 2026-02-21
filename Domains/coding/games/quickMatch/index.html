@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Match Duel</title>
+    <link rel="stylesheet" href="style.scss">
+</head>
+<body>
+
+<div id="titleScreen" class="screen active">
+    <h1>Quick Match Duel</h1>
+    <button id="playBtn">Play</button>
+    <button id="leaderboardBtn">Leaderboard</button>
+</div>
+
+<div id="leaderboardScreen" class="screen">
+    <h2>Leaderboard</h2>
+    <div id="leaderboardData"></div>
+    <button id="leaderboardBackBtn">Back</button>
+</div>
+
+<div id="lobbyScreen" class="screen">
+    <h2>Select Skill Mode</h2>
+    <p>Player: <span id="playerName"></span></p>
+    <p>Rating: <span id="playerRating"></span></p>
+
+    <div id="skillSelection">
+        <button data-skill="development">Development</button>
+    </div>
+
+    <button id="findMatchBtn">Find Duel Partner</button>
+    <button id="lobbyBackBtn">Back</button>
+</div>
+
+<div id="matchScreen" class="screen">
+    <h2>Finding Opponent...</h2>
+    <div class="loader"></div>
+</div>
+
+<div id="gameScreen" class="screen">
+    <div id="roundInfo"></div>
+    <div id="timer"></div>
+    <div id="questionContainer"></div>
+    <div id="editor" style="height:300px;"></div>
+    <button id="submitBtn">Submit</button>
+    <div id="scoreboard"></div>
+    <div id="opponentScore"></div>
+</div>
+
+<div id="resultScreen" class="screen">
+    <h2>Duel Result</h2>
+    <div id="finalStats"></div>
+    <button id="resultBackBtn">Back to Title</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+<script type="module" src="duelController.js"></script>
+
+</body>
+</html>
