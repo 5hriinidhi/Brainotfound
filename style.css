@@ -573,6 +573,14 @@ body {
   background: url('images/speaking_card.gif') center center / cover no-repeat;
 }
 
+.duel-bg {
+  background: url('images/coding_duel.png') center center / cover no-repeat;
+}
+
+.story-bg {
+  background: url('images/story_mode.png') center center / cover no-repeat;
+}
+
 .card-badge {
   position: absolute;
   top: 12px;

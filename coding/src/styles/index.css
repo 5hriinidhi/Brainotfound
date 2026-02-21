@@ -1,0 +1,38 @@
+:root {
+  --neon-cyan: #00ffff;
+  --neon-purple: #7f00ff;
+  --bg-dark: #0f1120;
+  --glass: rgba(20, 25, 45, 0.7);
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-dark);
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  overflow: hidden;
+}
+
+.glass-panel {
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.neon-button {
+  background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.neon-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--neon-cyan);
+}
