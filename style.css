@@ -581,6 +581,18 @@ body {
   background: url('images/story_mode.png') center center / cover no-repeat;
 }
 
+.circuit-bg {
+  background: url('images/circuit_lab.png') center center / cover no-repeat;
+}
+
+.crisis-bg {
+  background: url('images/crisis_mode.png') center center / cover no-repeat;
+}
+
+.arena-bg {
+  background: url('images/iot_arena.png') center center / cover no-repeat;
+}
+
 .card-badge {
   position: absolute;
   top: 12px;

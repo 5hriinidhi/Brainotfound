@@ -1,0 +1,13 @@
+@echo off
+echo Installing IoT Server dependencies...
+cd iot\server
+call npm install
+echo Installing IoT Client dependencies...
+cd ..\client
+call npm install
+echo Building IoT Client...
+call npm run build
+echo Starting IoT Server...
+cd ..\server
+node src/index.js
+pause

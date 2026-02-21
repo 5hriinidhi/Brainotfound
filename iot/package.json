@@ -1,0 +1,15 @@
+{
+    "name": "iot-visual-novel",
+    "version": "1.0.0",
+    "private": true,
+    "description": "IoT Visual Novel full-stack app — Next.js + Express + MongoDB",
+    "scripts": {
+        "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+        "dev:server": "npm --prefix server run dev",
+        "dev:client": "npm --prefix client run dev",
+        "install:all": "npm --prefix server install && npm --prefix client install"
+    },
+    "devDependencies": {
+        "concurrently": "^9.0.1"
+    }
+}
