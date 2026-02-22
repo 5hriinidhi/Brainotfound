@@ -156,9 +156,19 @@ router.post('/game-results', authMiddleware, async (req, res) => {
 
         // Determine which skill to update
         const targetSkill = skillArea || GAME_SKILL_MAP[gameType] || 'Problem Solving';
-        const skill = user.skills.find(
+        let skill = user.skills.find(
             (s) => s.skillName.toLowerCase() === targetSkill.toLowerCase()
         );
+
+        if (!skill) {
+            user.skills.push({
+                skillName: targetSkill,
+                level: 1,
+                xp: 0,
+                weakAreas: []
+            });
+            skill = user.skills[user.skills.length - 1];
+        }
 
         // Calculate XP to award
         const baseXP = xpEarned || Math.round(score * 0.5);
