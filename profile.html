@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile – Skill Forge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+    <!-- Nav -->
+    <nav class="pf-nav">
+        <a href="index.html" class="pf-nav-logo">
+            <span class="logo-coin">🪙</span>
+            <span class="logo-text">Skill Forge</span>
+        </a>
+        <div class="pf-nav-actions">
+            <a href="skilltree.html" class="pf-nav-link">🌳 Skill Tree</a>
+            <a href="dashboard.html" class="pf-nav-link">📊 Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="pf-main">
+        <!-- Profile Header Card -->
+        <section class="pf-header-card" id="profileHeader">
+            <div class="pf-photo-wrap">
+                <div class="pf-photo" id="profilePhoto">
+                    <span class="pf-initials" id="profileInitials">?</span>
+                </div>
+                <label class="pf-photo-edit" id="photoEditBtn" title="Change photo">
+                    <input type="file" accept="image/*" id="photoInput" hidden>
+                    📷
+                </label>
+            </div>
+            <div class="pf-info">
+                <h1 class="pf-name" id="profileName">Loading...</h1>
+                <p class="pf-email" id="profileEmail"></p>
+                <p class="pf-bio" id="profileBio"></p>
+                <div class="pf-stats-row">
+                    <div class="pf-stat">
+                        <span class="pf-stat-num" id="statXP">0</span>
+                        <span class="pf-stat-label">Total XP</span>
+                    </div>
+                    <div class="pf-stat">
+                        <span class="pf-stat-num" id="statSkills">0</span>
+                        <span class="pf-stat-label">Skills</span>
+                    </div>
+                    <div class="pf-stat">
+                        <span class="pf-stat-num" id="statLevel">1</span>
+                        <span class="pf-stat-label">Highest Level</span>
+                    </div>
+                    <div class="pf-stat">
+                        <span class="pf-stat-num" id="statAssessments">0</span>
+                        <span class="pf-stat-label">Assessments</span>
+                    </div>
+                </div>
+                <button class="pf-edit-btn" id="editProfileBtn">✏️ Edit Profile</button>
+            </div>
+        </section>
+
+        <!-- Edit Profile Panel -->
+        <section class="pf-edit-panel" id="editPanel" style="display:none">
+            <h2>Edit Profile</h2>
+            <form id="editForm" class="pf-edit-form">
+                <div class="pf-field">
+                    <label>Name</label>
+                    <input type="text" id="editName" minlength="2" maxlength="50" required>
+                </div>
+                <div class="pf-field">
+                    <label>Bio</label>
+                    <textarea id="editBio" maxlength="200" rows="3" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                <div class="pf-edit-actions">
+                    <button type="submit" class="pf-save-btn">💾 Save Changes</button>
+                    <button type="button" class="pf-cancel-btn" id="cancelEdit">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Skill Radar Chart -->
+        <section class="pf-section">
+            <h2 class="pf-section-title">📡 Skill Radar</h2>
+            <div class="pf-radar-wrap">
+                <canvas id="radarChart" width="400" height="400"></canvas>
+            </div>
+        </section>
+
+        <!-- Weak Areas -->
+        <section class="pf-section">
+            <h2 class="pf-section-title">⚠️ Weak Areas</h2>
+            <div class="pf-weak-areas" id="weakAreasGrid">
+                <div class="pf-loading">Analyzing skills...</div>
+            </div>
+        </section>
+
+        <!-- Skill Progress Overview -->
+        <section class="pf-section">
+            <h2 class="pf-section-title">⚔️ Skill Progress</h2>
+            <div class="pf-skills-grid" id="skillsGrid">
+                <div class="pf-loading">Loading skills...</div>
+            </div>
+        </section>
+
+        <!-- Recent Assessments -->
+        <section class="pf-section">
+            <h2 class="pf-section-title">📋 Recent Assessments</h2>
+            <div class="pf-assessments" id="assessmentsList">
+                <div class="pf-loading">Loading assessments...</div>
+            </div>
+        </section>
+    </main>
+
+    <script src="profile.js"></script>
+</body>
+
+</html>

@@ -105,6 +105,51 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
+  position: relative;
+}
+
+.nav-links a::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  background: url('coin.png') center / contain no-repeat;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  animation: coinSpin 0.8s linear infinite;
+  animation-play-state: paused;
+  filter: drop-shadow(0 0 4px rgba(245, 197, 24, 0.6));
+}
+
+.nav-links a:hover::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@keyframes coinSpin {
+  0% {
+    transform: translateY(-50%) scaleX(1);
+  }
+
+  25% {
+    transform: translateY(-50%) scaleX(0.1);
+  }
+
+  50% {
+    transform: translateY(-50%) scaleX(1);
+  }
+
+  75% {
+    transform: translateY(-50%) scaleX(0.1);
+  }
+
+  100% {
+    transform: translateY(-50%) scaleX(1);
+  }
 }
 
 .nav-links a:hover {

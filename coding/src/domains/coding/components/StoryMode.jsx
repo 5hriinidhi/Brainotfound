@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { storyData } from '../storyMode/storyData';
 import DuelArena from './DuelArena';
+import { sendGameResults } from '../engine/performanceBridge';
 
 const font = "'Press Start 2P', cursive";
 
@@ -19,8 +20,16 @@ const StoryMode = ({ onExit }) => {
         // >= 50% accuracy = success, otherwise failure
         const passed = avgAccuracy >= 50;
 
+        // Report to SkillForge auth server
+        sendGameResults({
+            gameType: 'coding-story',
+            score: Math.round(avgAccuracy),
+            skillArea: 'Problem Solving',
+            weakTopics: !passed ? ['Story challenge failed', `Avg accuracy: ${Math.round(avgAccuracy)}%`] : [],
+            xpEarned: passed ? 30 : 10,
+        });
+
         if (currentNode.isEnding) {
-            // Already at an ending node, shouldn't happen but handle gracefully
             setGameState('ENDING');
             return;
         }

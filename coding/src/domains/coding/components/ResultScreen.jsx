@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useCodingStore } from '../store/useCodingStore';
 import { calculateELO } from '../engine/eloSystem';
 import { buildCodingMetrics } from '../engine/metricsCollector';
+import { sendGameResults } from '../engine/performanceBridge';
 
 const font = "'Press Start 2P', cursive";
 
@@ -56,6 +57,16 @@ const ResultScreen = ({ playerResults, skill, opponentRating, onReturn, isFriend
             ratingChange: newRating - currentRating, newRating,
         });
         setMetrics({ ...finalMetrics, resultValue, opponentScore: Math.round(opponentScore), playerScore: Math.round(playerScore) });
+
+        // Report to SkillForge auth server for profile/skill tracking
+        const weakRounds = playerResults.filter(r => r.accuracy < 60);
+        sendGameResults({
+            gameType: `coding-duel-${skill}`,
+            score: Math.round(playerScore),
+            weakTopics: weakRounds.length > 0 ? [`Low accuracy in ${weakRounds.length}/${totalRounds} rounds`] : [],
+            xpEarned: Math.round(avgAccuracy * 0.5),
+            metrics: { avgAccuracy: Math.round(avgAccuracy), avgEfficiency: Math.round(avgEfficiency), ratingChange: newRating - currentRating },
+        });
     }, []);
 
     if (!metrics) {

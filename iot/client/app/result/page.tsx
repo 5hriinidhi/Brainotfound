@@ -30,6 +30,7 @@ import { analyzePerformance, type PerformanceAnalysis } from '@/utils/skillAnaly
 import { fireSideCannons } from '@/utils/confetti';
 import PerformanceCertificate from '@/components/game-ui/PerformanceCertificate';
 import api from '@/lib/api';
+import { sendGameResults } from '@/lib/performanceBridge';
 
 // ── Rank Calculation ─────────────────────────────────────────────────────────
 function getRank(pct: number) {
@@ -185,6 +186,30 @@ export default function ResultPage() {
     useEffect(() => {
         if (user && !submitted && !submitting) handleSubmitScore();
     }, [user, submitted, submitting, handleSubmitScore]);
+
+    // Report to SkillForge auth server for profile/skill tracking
+    useEffect(() => {
+        if (!gameMode) return;
+        const weakSkills = [
+            { label: 'Reasoning', value: analysis.skillRatings.reasoning },
+            { label: 'Efficiency', value: analysis.skillRatings.efficiency },
+            { label: mode === 'debug' ? 'Power Awareness' : 'Stability', value: analysis.skillRatings.powerOrStability },
+            { label: 'Time Management', value: analysis.skillRatings.timeManagement },
+        ].filter(s => s.value < 75).map(s => s.label);
+
+        sendGameResults({
+            gameType: mode === 'debug' ? 'iot-circuit' : 'iot-crisis',
+            score: pct,
+            weakTopics: weakSkills,
+            xpEarned: totalXP || Math.round(pct * 0.5),
+            metrics: {
+                reasoning: analysis.skillRatings.reasoning,
+                efficiency: analysis.skillRatings.efficiency,
+                powerOrStability: analysis.skillRatings.powerOrStability,
+                timeManagement: analysis.skillRatings.timeManagement,
+            },
+        });
+    }, [gameMode]);
 
     const handleReplay = () => { startGame(gameMode); router.push('/game'); };
     const handleHome = () => { resetGame(); router.push('/'); };

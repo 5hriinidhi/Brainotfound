@@ -882,6 +882,38 @@ Speech Transcript:
                     });
                 }, 100);
 
+                // ── Send to SkillForge auth server ──
+                try {
+                    const token = localStorage.getItem('sf_token');
+                    if (token) {
+                        const scores = analysis.scores;
+                        const avgScore = Object.values(scores).reduce((a, b) => a + b, 0) / Object.keys(scores).length;
+                        const weakTopics = Object.entries(scores)
+                            .filter(([, v]) => v < 60)
+                            .map(([k]) => k);
+
+                        fetch('http://localhost:4000/api/skills/game-results', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({
+                                gameType: 'communication-speaking',
+                                score: Math.round(avgScore),
+                                skillArea: 'Problem Solving',
+                                weakTopics: weakTopics,
+                                xpEarned: Math.round(avgScore * 0.6),
+                                metrics: scores,
+                            }),
+                        })
+                            .then(r => r.json())
+                            .then(d => console.log('🎯 SkillForge:', d.message))
+                            .catch(() => { });
+                    }
+                } catch (e) { /* silent */ }
+
+
             } catch (err) {
                 console.error(err);
                 analysisContent.innerHTML = `<div class="feedback-text" style="color: var(--red);">Error generating analysis. Please try again.</div>`;

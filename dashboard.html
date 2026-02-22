@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Dashboard – Skill Forge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+    <!-- Nav -->
+    <nav class="db-nav">
+        <a href="index.html" class="db-nav-logo">
+            <span class="logo-coin">🪙</span>
+            <span class="logo-text">Skill Forge</span>
+        </a>
+        <h1 class="db-nav-title">📊 Assessment Dashboard</h1>
+        <div class="db-nav-actions">
+            <a href="profile.html" class="db-nav-link">👤 Profile</a>
+            <a href="skilltree.html" class="db-nav-link">🌳 Skill Tree</a>
+        </div>
+    </nav>
+
+    <main class="db-main">
+        <!-- Stats Overview -->
+        <section class="db-overview" id="overview">
+            <div class="db-stat-card">
+                <div class="db-stat-icon">📝</div>
+                <div class="db-stat-value" id="totalTests">0</div>
+                <div class="db-stat-label">Assessments</div>
+            </div>
+            <div class="db-stat-card">
+                <div class="db-stat-icon">🎯</div>
+                <div class="db-stat-value" id="avgScore">0%</div>
+                <div class="db-stat-label">Avg Score</div>
+            </div>
+            <div class="db-stat-card">
+                <div class="db-stat-icon">🏆</div>
+                <div class="db-stat-value" id="bestScore">0%</div>
+                <div class="db-stat-label">Best Score</div>
+            </div>
+            <div class="db-stat-card">
+                <div class="db-stat-icon">⚠️</div>
+                <div class="db-stat-value" id="weakCount">0</div>
+                <div class="db-stat-label">Weak Areas</div>
+            </div>
+        </section>
+
+        <!-- Top Weak Areas -->
+        <section class="db-section" id="weakSection" style="display:none">
+            <h2 class="db-section-title">🔴 Top Weak Areas</h2>
+            <div class="db-weak-grid" id="weakGrid"></div>
+        </section>
+
+        <!-- Assessment History -->
+        <section class="db-section">
+            <h2 class="db-section-title">📋 Assessment History</h2>
+            <div class="db-assessments" id="assessmentsList">
+                <div class="db-loading">Loading assessments...</div>
+            </div>
+        </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

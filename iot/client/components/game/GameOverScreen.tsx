@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useGameStore } from '@/store/useGameStore';
 import { useRouter } from 'next/navigation';
+import { sendGameResults } from '@/lib/performanceBridge';
 
 export default function GameOverScreen() {
     const { reasoning, efficiency, powerAwareness, stability, score, gameStatus, gameMode, resetGame } =
@@ -9,6 +11,25 @@ export default function GameOverScreen() {
     const router = useRouter();
 
     const isComplete = gameStatus === 'complete';
+
+    // Report to SkillForge auth server
+    useEffect(() => {
+        if (gameMode && (gameStatus === 'complete' || gameStatus === 'gameover')) {
+            const weakStats = [
+                { label: 'Reasoning', value: reasoning },
+                { label: 'Efficiency', value: efficiency },
+                { label: 'Power', value: powerAwareness },
+                { label: 'Stability', value: stability },
+            ].filter(s => s.value < 50).map(s => s.label);
+
+            sendGameResults({
+                gameType: gameMode === 'debug' ? 'iot-circuit' : 'iot-crisis',
+                score: Math.round((score / Math.max(1, score + 50)) * 100),
+                weakTopics: weakStats,
+                xpEarned: Math.round(score * 0.3),
+            });
+        }
+    }, [gameStatus]);
 
     const handleRestart = () => {
         resetGame();

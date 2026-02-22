@@ -1,0 +1,512 @@
+/* ==============================
+   SKILL TREE PAGE STYLES
+   Gamified, Dark, Glowing Nodes
+============================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #060810;
+    --card-bg: rgba(22, 27, 39, 0.85);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --white: #fff;
+    --white-70: rgba(255, 255, 255, 0.7);
+    --white-40: rgba(255, 255, 255, 0.4);
+    --gold: #F5C518;
+    --gold-glow: rgba(245, 197, 24, 0.4);
+    --teal: #38d4c4;
+    --pink: #ff6eb4;
+    --purple: #a855f7;
+    --pixel-font: 'Press Start 2P', monospace;
+    --body-font: 'Inter', sans-serif;
+}
+
+body {
+    font-family: var(--body-font);
+    background: var(--bg);
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(245, 197, 24, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(56, 212, 196, 0.03) 0%, transparent 50%);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Grid pattern overlay */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* ── Nav ──────────────────────────────────────────── */
+.st-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 64px;
+    background: rgba(6, 8, 16, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+}
+
+.st-nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.logo-coin {
+    font-size: 22px;
+}
+
+.logo-text {
+    font-family: var(--pixel-font);
+    font-size: 13px;
+    color: var(--white);
+}
+
+.st-nav-title {
+    font-family: var(--pixel-font);
+    font-size: 11px;
+    color: var(--gold);
+    text-shadow: 0 0 16px var(--gold-glow);
+    letter-spacing: 1px;
+}
+
+.st-nav-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.st-nav-link {
+    color: var(--white-70);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+}
+
+.st-nav-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+}
+
+/* ── XP Summary Bar ──────────────────────────────── */
+.st-summary {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    padding: 20px 24px;
+    background: rgba(22, 27, 39, 0.5);
+    border-bottom: 1px solid var(--card-border);
+    position: relative;
+    z-index: 1;
+}
+
+.st-summary-item {
+    text-align: center;
+}
+
+.st-summary-label {
+    display: block;
+    font-size: 10px;
+    color: var(--white-40);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.st-summary-value {
+    font-family: var(--pixel-font);
+    font-size: 18px;
+    color: var(--gold);
+    text-shadow: 0 0 12px var(--gold-glow);
+}
+
+/* ── Tree Container ──────────────────────────────── */
+.st-main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+}
+
+.st-tree-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.st-loading {
+    color: var(--white-40);
+    font-size: 14px;
+    text-align: center;
+    padding: 60px;
+}
+
+.st-empty {
+    color: var(--white-40);
+    font-size: 14px;
+    text-align: center;
+    padding: 60px;
+}
+
+/* ── Skill Tree Rows ─────────────────────────────── */
+.st-tree-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+/* ── Connector Lines ─────────────────────────────── */
+.st-connectors {
+    width: 100%;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.st-connector-line {
+    width: 2px;
+    height: 24px;
+    background: linear-gradient(180deg, var(--gold-glow), transparent);
+}
+
+/* ── Skill Node ──────────────────────────────────── */
+.st-node {
+    width: 160px;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 2px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.st-node::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 0%, var(--gold-glow), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.35s;
+}
+
+.st-node:hover {
+    transform: translateY(-6px) scale(1.03);
+    border-color: rgba(245, 197, 24, 0.4);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--gold-glow);
+}
+
+.st-node:hover::before {
+    opacity: 1;
+}
+
+/* Unlocked & Active */
+.st-node.unlocked {
+    border-color: rgba(245, 197, 24, 0.3);
+}
+
+.st-node.unlocked .st-node-icon {
+    filter: none;
+}
+
+/* Max level glow */
+.st-node.maxed {
+    border-color: var(--gold);
+    box-shadow: 0 0 24px var(--gold-glow), 0 0 48px rgba(245, 197, 24, 0.15);
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 24px var(--gold-glow), 0 0 48px rgba(245, 197, 24, 0.15);
+    }
+
+    50% {
+        box-shadow: 0 0 32px var(--gold-glow), 0 0 64px rgba(245, 197, 24, 0.25);
+    }
+}
+
+/* Locked */
+.st-node.locked {
+    opacity: 0.35;
+    filter: grayscale(0.5);
+    cursor: default;
+}
+
+.st-node.locked:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--card-border);
+}
+
+.st-node-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    filter: grayscale(0.3);
+    transition: filter 0.3s;
+}
+
+.st-node-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.st-node-level {
+    font-family: var(--pixel-font);
+    font-size: 8px;
+    color: var(--gold);
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Node XP Bar ─────────────────────────────────── */
+.st-node-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.st-node-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), #ffd633);
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px var(--gold-glow);
+}
+
+.st-node-xp {
+    font-size: 9px;
+    color: var(--white-40);
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Lock icon overlay */
+.st-node-lock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.2);
+    z-index: 2;
+}
+
+/* ── Detail Panel ────────────────────────────────── */
+.st-detail-panel {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 320px;
+    background: rgba(22, 27, 39, 0.95);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), 0 0 40px rgba(245, 197, 24, 0.05);
+    z-index: 200;
+    animation: panelSlideIn 0.35s ease;
+}
+
+@keyframes panelSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.st-detail-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--white-40);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.st-detail-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+}
+
+.st-detail-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+.st-detail-name {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.st-detail-level {
+    font-family: var(--pixel-font);
+    font-size: 10px;
+    color: var(--gold);
+    margin-bottom: 16px;
+}
+
+.st-detail-bar-wrap {
+    margin-bottom: 16px;
+}
+
+.st-detail-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.st-detail-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--gold), #ffd633);
+    transition: width 1s ease;
+    box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.st-detail-xp {
+    font-size: 12px;
+    color: var(--white-40);
+    margin-top: 6px;
+}
+
+.st-detail-weak {
+    margin-bottom: 12px;
+}
+
+.st-detail-weak-tag {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin: 2px 4px 2px 0;
+}
+
+.st-detail-status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.st-detail-status.complete {
+    background: rgba(56, 212, 196, 0.1);
+    color: var(--teal);
+}
+
+.st-detail-status.active {
+    background: rgba(245, 197, 24, 0.1);
+    color: var(--gold);
+}
+
+.st-detail-status.locked {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--white-40);
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+    .st-tree-row {
+        gap: 12px;
+    }
+
+    .st-node {
+        width: 140px;
+        padding: 16px 12px;
+    }
+
+    .st-summary {
+        gap: 24px;
+    }
+
+    .st-detail-panel {
+        left: 16px;
+        right: 16px;
+        width: auto;
+        bottom: 16px;
+    }
+
+    .st-nav-title {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .st-node {
+        width: 120px;
+        padding: 14px 10px;
+    }
+
+    .st-node-icon {
+        font-size: 24px;
+    }
+
+    .st-node-name {
+        font-size: 10px;
+    }
+}

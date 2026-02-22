@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Tree – Skill Forge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="skilltree.css">
+</head>
+
+<body>
+    <!-- Nav -->
+    <nav class="st-nav">
+        <a href="index.html" class="st-nav-logo">
+            <span class="logo-coin">🪙</span>
+            <span class="logo-text">Skill Forge</span>
+        </a>
+        <h1 class="st-nav-title">🌳 Skill Tree</h1>
+        <div class="st-nav-actions">
+            <a href="profile.html" class="st-nav-link">👤 Profile</a>
+            <a href="dashboard.html" class="st-nav-link">📊 Dashboard</a>
+        </div>
+    </nav>
+
+    <!-- XP Summary Bar -->
+    <div class="st-summary" id="xpSummary">
+        <div class="st-summary-item">
+            <span class="st-summary-label">Total XP</span>
+            <span class="st-summary-value" id="totalXP">0</span>
+        </div>
+        <div class="st-summary-item">
+            <span class="st-summary-label">Skills</span>
+            <span class="st-summary-value" id="totalSkills">0</span>
+        </div>
+        <div class="st-summary-item">
+            <span class="st-summary-label">Max Level</span>
+            <span class="st-summary-value" id="maxLevel">1</span>
+        </div>
+    </div>
+
+    <main class="st-main">
+        <!-- Skill Tree Visualization -->
+        <div class="st-tree-container" id="skillTree">
+            <div class="st-loading" id="treeLoading">Loading skill tree...</div>
+        </div>
+
+        <!-- Skill Detail Panel -->
+        <div class="st-detail-panel" id="detailPanel" style="display:none">
+            <button class="st-detail-close" id="closeDetail">&times;</button>
+            <div class="st-detail-icon" id="detailIcon">⚡</div>
+            <h2 class="st-detail-name" id="detailName">Skill</h2>
+            <div class="st-detail-level" id="detailLevel">Level 1</div>
+            <div class="st-detail-bar-wrap">
+                <div class="st-detail-bar">
+                    <div class="st-detail-bar-fill" id="detailBarFill" style="width:0%"></div>
+                </div>
+                <div class="st-detail-xp" id="detailXP">0 / 100 XP</div>
+            </div>
+            <div class="st-detail-weak" id="detailWeak"></div>
+            <div class="st-detail-status" id="detailStatus"></div>
+        </div>
+    </main>
+
+    <script src="skilltree.js"></script>
+</body>
+
+</html>
