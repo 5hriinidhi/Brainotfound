@@ -595,11 +595,11 @@ body {
 }
 
 .data-bg {
-  background: linear-gradient(135deg, #1a3a3a 0%, #1e6b6b 40%, #35c4b8 100%);
+  background: url('images/dashboard.jpg') center center / cover no-repeat;
 }
 
 .sql-bg {
-  background: linear-gradient(135deg, #2a1a2a 0%, #5e1e5e 40%, #b835b8 100%);
+  background: url('images/erroe.jpg') center center / cover no-repeat;
 }
 
 .cmd-bg {

@@ -1,0 +1,890 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Inter:wght@400;500;600&display=swap');
+
+/* ===========================
+   CSS VARIABLES / TOKENS
+   =========================== */
+:root {
+    --bg-deep: #07071a;
+    --bg-card: #0e0e26;
+    --bg-panel: #0b0b20;
+    --neon-green: #2ecc71;
+    --neon-cyan: #00c8e0;
+    --neon-red: #e8334a;
+    --neon-gold: #f0c040;
+    --neon-purple: #9b59b6;
+    --neon-orange: #e67e22;
+    --text-main: #d0d0ee;
+    --text-dim: #606080;
+    --border-dim: #252545;
+    --pixel-shadow: 3px 3px 0px #000;
+    --glow-green: 0 0 6px rgba(46, 204, 113, 0.5);
+    --glow-cyan: 0 0 6px rgba(0, 200, 224, 0.5);
+    --glow-red: 0 0 6px rgba(232, 51, 74, 0.5);
+    --glow-gold: 0 0 6px rgba(240, 192, 64, 0.5);
+}
+
+/* ===========================
+   RESET & BASE
+   =========================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Subtle scanline — much lighter */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 3px,
+            rgba(0, 0, 0, 0.03) 3px,
+            rgba(0, 0, 0, 0.03) 4px);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ===========================
+   PIXEL GRID BACKGROUND
+   =========================== */
+.pixel-bg {
+    background-color: var(--bg-deep);
+    background-image:
+        linear-gradient(rgba(0, 200, 224, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 200, 224, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+}
+
+/* ===========================
+   TYPOGRAPHY
+   =========================== */
+h1,
+h2,
+h3 {
+    font-family: 'Press Start 2P', monospace;
+}
+
+.mono {
+    font-family: 'VT323', monospace;
+    font-size: 1.3em;
+}
+
+.neon-green {
+    color: var(--neon-green);
+}
+
+.neon-cyan {
+    color: var(--neon-cyan);
+}
+
+.neon-red {
+    color: var(--neon-red);
+}
+
+.neon-gold {
+    color: var(--neon-gold);
+}
+
+.neon-purple {
+    color: var(--neon-purple);
+}
+
+/* Glitch — more subtle */
+.glitch {
+    position: relative;
+    animation: glitch-flicker 6s infinite;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.glitch::before {
+    color: var(--neon-cyan);
+    animation: glitch-1 5s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    opacity: 0.6;
+}
+
+.glitch::after {
+    color: var(--neon-red);
+    animation: glitch-2 5s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    opacity: 0.5;
+}
+
+@keyframes glitch-1 {
+
+    0%,
+    92%,
+    100% {
+        transform: translate(0);
+    }
+
+    93% {
+        transform: translate(-2px, 1px);
+    }
+
+    95% {
+        transform: translate(2px, -1px);
+    }
+}
+
+@keyframes glitch-2 {
+
+    0%,
+    92%,
+    100% {
+        transform: translate(0);
+    }
+
+    94% {
+        transform: translate(2px, 2px);
+    }
+
+    96% {
+        transform: translate(-2px);
+    }
+}
+
+@keyframes glitch-flicker {
+
+    0%,
+    97%,
+    100% {
+        opacity: 1;
+    }
+
+    98% {
+        opacity: 0.85;
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-3px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(3px);
+    }
+}
+
+.shake {
+    animation: shake 0.4s ease;
+}
+
+/* ===========================
+   PIXEL BUTTONS
+   =========================== */
+.btn-pixel {
+    display: inline-block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 10px 20px;
+    border: 2px solid currentColor;
+    background: transparent;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+    box-shadow: 3px 3px 0 #000;
+    text-decoration: none;
+}
+
+.btn-pixel:active {
+    transform: translate(3px, 3px) !important;
+    box-shadow: 0 0 0 #000 !important;
+}
+
+.btn-green {
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+}
+
+.btn-green:hover {
+    background: var(--neon-green);
+    color: #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #000;
+}
+
+.btn-cyan {
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+}
+
+.btn-cyan:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #000;
+}
+
+.btn-red {
+    color: var(--neon-red);
+    border-color: var(--neon-red);
+}
+
+.btn-red:hover {
+    background: var(--neon-red);
+    color: #fff;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #000;
+}
+
+.btn-gold {
+    color: var(--neon-gold);
+    border-color: var(--neon-gold);
+}
+
+.btn-gold:hover {
+    background: var(--neon-gold);
+    color: #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #000;
+}
+
+.btn-pixel:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 3px 3px 0 #000 !important;
+}
+
+/* ===========================
+   CARDS
+   =========================== */
+.pixel-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dim);
+    padding: 20px;
+    position: relative;
+}
+
+/* ===========================
+   TOP NAVBAR
+   =========================== */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--border-dim);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.top-bar .logo {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+}
+
+/* ===========================
+   TIMER DISPLAY
+   =========================== */
+.timer-display {
+    font-size: 24px;
+    font-family: 'Press Start 2P', monospace;
+    color: var(--neon-green);
+    letter-spacing: 3px;
+    transition: color 0.5s;
+}
+
+.timer-display.warn {
+    color: var(--neon-gold);
+}
+
+.timer-display.danger {
+    color: var(--neon-red);
+    animation: blink 0.6s step-end infinite;
+}
+
+/* ===========================
+   PIXEL SCROLLBAR
+   =========================== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-dim);
+}
+
+/* ===========================
+   INPUTS
+   =========================== */
+.pixel-input,
+.pixel-textarea,
+.pixel-select {
+    background: #000;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-green);
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    padding: 10px 14px;
+    width: 100%;
+    outline: none;
+    resize: none;
+    caret-color: var(--neon-green);
+}
+
+.pixel-input:focus,
+.pixel-textarea:focus {
+    border-color: var(--neon-green);
+}
+
+.pixel-select option {
+    background: #000;
+    color: var(--neon-green);
+}
+
+/* ===========================
+   CODE / SQL EDITOR
+   =========================== */
+.code-editor {
+    background: #050510;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-green);
+    font-family: 'VT323', monospace;
+    font-size: 17px;
+    padding: 12px 14px;
+    width: 100%;
+    min-height: 90px;
+    outline: none;
+    resize: vertical;
+    caret-color: var(--neon-green);
+    line-height: 1.6;
+}
+
+.code-editor:focus {
+    border-color: var(--neon-green);
+}
+
+.code-hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ===========================
+   DATA TABLE
+   =========================== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'VT323', monospace;
+    font-size: 15px;
+}
+
+.data-table th {
+    background: rgba(0, 200, 224, 0.07);
+    color: var(--neon-cyan);
+    padding: 7px 12px;
+    text-align: left;
+    font-size: 11px;
+    border: 1px solid rgba(0, 200, 224, 0.15);
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.5px;
+}
+
+.data-table td {
+    padding: 7px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+}
+
+.data-table tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.td-warn {
+    color: var(--neon-red) !important;
+}
+
+.td-ok {
+    color: var(--neon-green) !important;
+}
+
+.td-highlight {
+    color: var(--neon-gold) !important;
+}
+
+/* Inline editable cell */
+.cell-editable {
+    background: rgba(46, 204, 113, 0.04) !important;
+    border: 1px solid var(--neon-green) !important;
+}
+
+.inline-edit {
+    background: transparent;
+    border: none;
+    color: var(--neon-green);
+    font-family: 'VT323', monospace;
+    font-size: 15px;
+    width: 100%;
+    outline: none;
+}
+
+/* ===========================
+   JSON EDITOR
+   =========================== */
+.json-field-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.json-field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+}
+
+.json-key {
+    color: var(--neon-cyan);
+    min-width: 130px;
+}
+
+.json-colon {
+    color: var(--text-dim);
+}
+
+.json-val {
+    color: var(--neon-green);
+    background: #000;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    padding: 4px 8px;
+    flex: 1;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    outline: none;
+}
+
+.json-val.err {
+    color: var(--neon-red);
+    border-color: var(--neon-red);
+}
+
+.json-val:focus {
+    border-color: var(--neon-green);
+}
+
+/* ===========================
+   TOGGLE SWITCH
+   =========================== */
+.toggle-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 14px;
+    border: 1px solid var(--border-dim);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.toggle-label {
+    font-family: 'VT323', monospace;
+    font-size: 17px;
+    color: var(--text-main);
+}
+
+.pixel-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.toggle-track {
+    width: 40px;
+    height: 18px;
+    border: 1px solid var(--text-dim);
+    position: relative;
+    background: #000;
+    cursor: pointer;
+}
+
+.toggle-track.on {
+    border-color: var(--neon-green);
+    background: rgba(46, 204, 113, 0.1);
+}
+
+.toggle-thumb {
+    position: absolute;
+    top: 2px;
+    width: 11px;
+    height: 11px;
+    background: var(--text-dim);
+    transition: left 0.15s, background 0.15s;
+    left: 2px;
+}
+
+.toggle-track.on .toggle-thumb {
+    left: 25px;
+    background: var(--neon-green);
+}
+
+.toggle-state {
+    font-size: 7px;
+    color: var(--text-dim);
+    width: 28px;
+    font-family: 'Press Start 2P', monospace;
+}
+
+/* ===========================
+   CHART TYPE SELECTOR
+   =========================== */
+.chart-type-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.chart-type-btn {
+    padding: 12px 18px;
+    border: 1px solid var(--border-dim);
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--text-dim);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-type-btn .chart-icon {
+    font-size: 22px;
+}
+
+.chart-type-btn:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+
+.chart-type-btn.selected {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(46, 204, 113, 0.05);
+}
+
+/* ===========================
+   MEASURE SELECTOR
+   =========================== */
+.measure-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.measure-btn {
+    padding: 10px 16px;
+    border: 1px solid var(--border-dim);
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--text-dim);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.measure-btn:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+}
+
+.measure-btn.selected {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(46, 204, 113, 0.05);
+}
+
+/* ===========================
+   FORMULA / INPUT FIELDS
+   =========================== */
+.formula-input {
+    background: #000;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-gold);
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    padding: 10px 14px;
+    width: 100%;
+    outline: none;
+}
+
+.formula-input:focus {
+    border-color: var(--neon-green);
+}
+
+/* ===========================
+   SKILL / STATUS TAGS
+   =========================== */
+.skill-tag {
+    display: inline-block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 4px 10px;
+    border: 1px solid currentColor;
+    margin: 3px;
+    letter-spacing: 0.5px;
+}
+
+/* ===========================
+   RANK DISPLAY
+   =========================== */
+.rank-track {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.rank-dot {
+    width: 8px;
+    height: 8px;
+    border: 1px solid currentColor;
+}
+
+.rank-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    letter-spacing: 0.5px;
+}
+
+.rank-track-arrow {
+    font-size: 9px;
+    color: var(--text-dim);
+}
+
+/* ===========================
+   FEEDBACK BANNERS
+   =========================== */
+.feedback-banner {
+    padding: 10px 16px;
+    font-family: 'VT323', monospace;
+    font-size: 17px;
+    text-align: center;
+    letter-spacing: 2px;
+    display: none;
+    margin-bottom: 12px;
+}
+
+.feedback-banner.success {
+    display: block;
+    background: rgba(46, 204, 113, 0.08);
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+}
+
+.feedback-banner.error {
+    display: block;
+    background: rgba(232, 51, 74, 0.08);
+    border: 1px solid var(--neon-red);
+    color: var(--neon-red);
+}
+
+/* ===========================
+   SPOT OPTIONS
+   =========================== */
+.spot-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.spot-option {
+    padding: 10px 14px;
+    border: 1px solid var(--border-dim);
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--text-dim);
+    transition: all 0.15s;
+    text-align: left;
+    background: transparent;
+    width: 100%;
+}
+
+.spot-option:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    background: rgba(0, 200, 224, 0.04);
+}
+
+.spot-option.selected {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(46, 204, 113, 0.04);
+}
+
+.spot-option.wrong {
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+    background: rgba(232, 51, 74, 0.06);
+    animation: shake 0.3s ease;
+}
+
+/* ===========================
+   UTILITY
+   =========================== */
+.text-center {
+    text-align: center;
+}
+
+.mt-8 {
+    margin-top: 8px;
+}
+
+.mt-12 {
+    margin-top: 12px;
+}
+
+.mt-16 {
+    margin-top: 16px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mt-24 {
+    margin-top: 24px;
+}
+
+.mb-8 {
+    margin-bottom: 8px;
+}
+
+.mb-12 {
+    margin-bottom: 12px;
+}
+
+.mb-16 {
+    margin-bottom: 16px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.gap-8 {
+    gap: 8px;
+}
+
+.gap-12 {
+    gap: 12px;
+}
+
+.gap-16 {
+    gap: 16px;
+}

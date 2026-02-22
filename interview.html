@@ -1132,11 +1132,42 @@ CRITICAL REQUIREMENT: You must return every response EXACTLY as a JSON object, w
 
                 gainXP(parsed.xp_awarded || 0);
                 showEmotion(parsed.emotion || 'calm');
-                addMsg('alex', parsed.next_question);
-                setStatus('Alex is speaking', true);
 
-                // Web Speech API Text-to-Speech
-                speakAlex(parsed.next_question);
+                // --- SCORE SUBMISSION LOGIC ---
+                // If it's the final evaluation (no question, or it indicates completion)
+                if (!parsed.next_question || parsed.next_question.toLowerCase().includes("final evaluation")) {
+                    addMsg('alex', parsed.next_question || "That concludes our interview.");
+                    setStatus('Interview Complete', false);
+
+                    // Fire off score to your skill tracker API
+                    const token = localStorage.getItem('sf_token');
+                    if (token) {
+                        fetch('http://localhost:4000/api/skills/game-results', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                gameType: 'communication-interview',
+                                score: Math.min(100, xp + (parsed.xp_awarded || 0)),
+                                skillArea: 'Problem Solving',
+                                metrics: { rawXp: xp + (parsed.xp_awarded || 0) }
+                            })
+                        }).catch(e => console.warn('Could not save interview score:', e));
+                    }
+
+                    // Speak the final concluding sentence
+                    speakAlex(parsed.next_question || "That concludes our interview. Good luck!");
+
+                    // Optionally disconnect automatically
+                    setTimeout(() => disconnect(), 5000);
+                } else {
+                    addMsg('alex', parsed.next_question);
+                    setStatus('Alex is speaking', true);
+                    // Web Speech API Text-to-Speech
+                    speakAlex(parsed.next_question);
+                }
 
             } catch (e) {
                 console.error("Gemini AI Error:", e);
